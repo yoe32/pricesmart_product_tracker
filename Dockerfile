@@ -15,7 +15,7 @@ RUN pip install fastapi selenium uvicorn \
     && rm geckodriver-v0.33.0-linux64.tar.gz
 
 # Exponer el puerto
-EXPOSE 8000
+EXPOSE 8100
 
 # Comando para ejecutar la app
 CMD ["uvicorn", "scraper_service:app", "--host", "0.0.0.0", "--port", "8000"]
