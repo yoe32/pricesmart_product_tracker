@@ -18,4 +18,4 @@ RUN pip install fastapi selenium uvicorn \
 EXPOSE 8100
 
 # Comando para ejecutar la app
-CMD ["uvicorn", "scraper_service:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "scraper_service:app", "--host", "0.0.0.0", "--port", "8100"]
