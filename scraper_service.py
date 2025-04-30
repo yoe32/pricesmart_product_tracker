@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 import time
+import traceback
 
 app = FastAPI()
 
@@ -10,16 +11,18 @@ app = FastAPI()
 def check_availability():
     options = Options()
     options.headless = True
+    options.add_argument("--headless")            # Refuerzo extra
+    options.add_argument("--disable-gpu")         # Útil en contenedores
+    options.add_argument("--no-sandbox")          # Útil en entornos restringidos
+    options.add_argument("--disable-dev-shm-usage")  # Para evitar errores de memoria compartida
 
     driver = webdriver.Firefox(options=options)
 
     try:
         driver.get("https://www.pricesmart.com/en-cr/product/members-selection-cat-food-chicken-and-pea-formula-6-8-kg-15-lb-755630/755630")
-        time.sleep(5)  # Esperamos que el contenido cargue completamente
+        time.sleep(5)
 
         available_clubs = []
-
-        # Buscar todos los divs con la clase 'club_item'
         clubs = driver.find_elements(By.CLASS_NAME, "club_item")
 
         for club in clubs:
@@ -27,7 +30,6 @@ def check_availability():
             club_name_element = club.find_element(By.CLASS_NAME, "club_name")
             club_name = club_name_element.get_attribute("innerText").strip()
 
-            # Solo agregar clubes disponibles (sin clase 'unavailable_club')
             if "unavailable_club" not in class_attribute:
                 available_clubs.append(club_name)
 
@@ -39,7 +41,8 @@ def check_availability():
     except Exception as e:
         return {
             "status": "error",
-            "message": str(e)
+            "message": str(e),
+            "trace": traceback.format_exc()
         }
 
     finally:
